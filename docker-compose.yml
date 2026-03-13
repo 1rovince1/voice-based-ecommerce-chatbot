@@ -1,0 +1,12 @@
+services:
+  chatbot:
+    build: .
+    container_name: voice-ecommerce-chatbot
+    # ports:
+    #   - "8000:8000"
+    env_file:
+      - ./.env
+    volumes:
+      # Mount your local code into the container so you can edit files 
+      # and see changes instantly without rebuilding the image!
+      - .:/app
