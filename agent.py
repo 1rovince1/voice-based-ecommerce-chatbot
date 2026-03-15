@@ -23,6 +23,5 @@ chat_session = gemini.aio.chats.create(
 
 
 async def send_async_message(user_query: str):
-    response = chat_session.send_message(message=user_query)
-    print(f"AI: {response.text}")
+    response = await chat_session.send_message(message=user_query)
     return response.text
