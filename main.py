@@ -11,6 +11,6 @@ async def main():
             break
 
         ai_response = await send_async_message(user_query=user_query)
-        print(f"{ai_response}\n")
+        print(f"AI: {ai_response}\n")
 
 asyncio.run(main())
