@@ -1,5 +1,9 @@
+import pandas as pd
 import sqlite3
 
-conn = sqlite3.connect("test.db")
+# DB setup for retrieval
+connection = sqlite3.connect("database.db")
 
-print("Opened db successfully")
+def sql_tool(query: str):
+    """Run a SQL SELECT query on a SQLite database and return the results."""
+    return pd.read_sql_query(query, connection).to_dict(orient="records")

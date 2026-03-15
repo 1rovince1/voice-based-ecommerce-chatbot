@@ -1,1 +1,2 @@
-python data_processing.py
+python data_processing.py &&
+python main.py
