@@ -23,7 +23,7 @@ def policy_query_tool(query: str):
     """Fetch relevant information chunks from policy document"""
     try:
         policy_index = faiss.read_index("./policy_index.faiss")
-        with open("./policy_metadata", "rb") as f:
+        with open("./policy_metadata.pkl", "rb") as f:
             content_chunks = pickle.load(f)
         
         query_embedding = embedding_model.encode([query])
