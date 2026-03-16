@@ -10,4 +10,4 @@ services:
       # Mount your local code into the container so you can edit files 
       # and see changes instantly without rebuilding the image!
       - .:/app
-      - ~/.cache/huggingface:/root/.cache/huggingface
+      - ./hf_cache:/root/.cache/huggingface
