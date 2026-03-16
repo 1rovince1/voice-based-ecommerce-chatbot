@@ -209,3 +209,5 @@ __marimo__/
 # Manual additions
 .env
 *.db
+*.faiss
+*.pkl

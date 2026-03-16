@@ -1,5 +1,10 @@
 import pandas as pd
 import sqlite3
+from sentence_transformers import SentenceTransformer
+import pickle
+import faiss
+
+embedding_model = SentenceTransformer("intfloat/multilingual-e5-large-instruct")
 
 # SQL tool for csv DB query
 def sql_tool(query: str):
@@ -10,5 +15,20 @@ def sql_tool(query: str):
         connection.close()
         return result
     except Exception as e:
-        print(f"Error in running query: {str(e)}")
+        print(f"Error in running SQL query: {str(e)}")
+        return e
+    
+
+def policy_query_tool(query: str):
+    """Fetch relevant information chunks from policy document"""
+    try:
+        policy_index = faiss.read_index("./policy_index.faiss")
+        with open("./policy_metadata", "rb") as f:
+            content_chunks = pickle.load(f)
+        
+        query_embedding = embedding_model.encode([query])
+        D, I = policy_index.search(query_embedding, 10)
+        return [f"{i}: {content_chunks[i]}" for i in I[0]]
+    except Exception as e:
+        print(f"Error in running policy query: {str(e)}")
         return e

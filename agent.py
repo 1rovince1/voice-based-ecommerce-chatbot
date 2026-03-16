@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-from retrieval import sql_tool
+from retrieval import sql_tool, policy_query_tool
 from prompts import RETRIEVAL_AGENT_SYSTEM_PROMPT
 
 gemini = Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -13,7 +13,7 @@ SYSTEM_PROMPT = RETRIEVAL_AGENT_SYSTEM_PROMPT
 gemini_config_with_tools = types.GenerateContentConfig(
     system_instruction=SYSTEM_PROMPT,
     thinking_config=types.ThinkingConfig(thinking_budget=0),
-    tools=[sql_tool]
+    tools=[sql_tool, policy_query_tool]
 )
 
 chat_session = gemini.aio.chats.create(
