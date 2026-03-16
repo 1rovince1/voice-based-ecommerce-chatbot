@@ -4,13 +4,15 @@ from sentence_transformers import SentenceTransformer
 import pickle
 import faiss
 
+from config import config
+
 embedding_model = SentenceTransformer("intfloat/multilingual-e5-large-instruct")
 
 # SQL tool for csv DB query
 def sql_tool(query: str):
     """Run a SQL SELECT query on a SQLite database and return the results."""
     try:
-        connection = sqlite3.connect("database.db")
+        connection = sqlite3.connect(config.ECOMMERCE_DB_PATH)
         result = pd.read_sql_query(query, connection).to_dict(orient="records")
         connection.close()
         return result
@@ -22,8 +24,8 @@ def sql_tool(query: str):
 def policy_query_tool(query: str):
     """Fetch relevant information chunks from policy document"""
     try:
-        policy_index = faiss.read_index("./policy_index.faiss")
-        with open("./policy_metadata.pkl", "rb") as f:
+        policy_index = faiss.read_index(config.POLICY_FAISS_INDEX_PATH)
+        with open(config.POLICY_METADATA_PATH, "rb") as f:
             content_chunks = pickle.load(f)
         
         query_embedding = embedding_model.encode([query])
