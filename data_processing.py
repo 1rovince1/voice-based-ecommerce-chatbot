@@ -2,6 +2,8 @@ import pandas as pd
 import sqlite3
 
 import fitz
+import faiss
+from sentence_transformers import SentenceTransformer
 
 
 # CSV DATA
@@ -22,6 +24,16 @@ connection.close()
 policy_file_path = "./data/ecommerce_policies.pdf"
 policy_doc = fitz.open(policy_file_path)
 
-for i, page in enumerate(policy_doc):
-    text = page.get_text()
-    # print(f"Page {i}:\n\n{text}\n\n")
+content_chunks = []
+for page in policy_doc:
+    page_text = page.get_text("blocks")
+    for block in page_text:
+        if block[6] == 0: # Only text
+            content_chunks.append(block[4])
+
+embedding_model = SentenceTransformer("intfloat/multilingual-e5-large-instruct")
+content_embeddings = embedding_model.encode(
+    sentences=content_chunks,
+    batch_size=32,
+    show_progress_bar=True
+)
