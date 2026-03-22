@@ -1,36 +1,42 @@
 from dotenv import load_dotenv
 load_dotenv()
+from logger_config import setup_logging
+setup_logging()
+import logging
 import os
 import asyncio
-from agents.chat_agent import gemini_chat, ollama_chat
+
+logger = logging.getLogger(__name__)
 
 
 def select_chat_provider():
     if os.getenv("GEMINI_API_KEY"):
-        print("Found Gemini key, starting Gemini based chat session...")
+        logger.info("Found Gemini key, starting Gemini based chat session...")
+        from agents.chat_agent import gemini_chat
         return gemini_chat
     
     elif os.getenv("OLLAMA_API_KEY"):
-        print("Found Ollama api key, starting Ollama based chat session...")
+        logger.info("Found Ollama api key, starting Ollama based chat session...")
+        from agents.chat_agent import ollama_chat
         return ollama_chat
     
     raise RuntimeError("No LLM provider configured")
 
 
-print("Starting main")
+logger.debug("Starting main")
 async def main():
-    print("Starting chat")
+    logger.debug("Starting chat")
     ai_chat = select_chat_provider()
     
     while(True):
         user_query = input("User: ")
 
         if user_query == "/exit":
-            print("Thank you!!")
+            logger.info("Thank you!!")
             break
 
         ai_response = await ai_chat(user_query=user_query)
-        print(f"AI: {ai_response}\n")
+        logger.info(f"AI: {ai_response}\n")
 
 
 asyncio.run(main())

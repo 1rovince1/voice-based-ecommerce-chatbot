@@ -1,3 +1,6 @@
+from logger_config import setup_logging
+setup_logging()
+import logging
 import os
 import pandas as pd
 import sqlite3
@@ -8,11 +11,13 @@ from sentence_transformers import SentenceTransformer
 import pickle
 
 from config import config
+logger = logging.getLogger(__name__)
 
 os.makedirs(config.GENERATED_DIR, exist_ok=True)
 
 # CSV DATA
 if not os.path.exists(config.ECOMMERCE_DB_PATH):
+    logger.info("CREATING ECOMMERCE DB...")
     # data pre-processing
     dataframe = pd.read_csv(config.ECOMMERCE_DATA_FILE_PATH)
 
@@ -23,8 +28,9 @@ if not os.path.exists(config.ECOMMERCE_DB_PATH):
     dataframe.to_sql("ecommerce_table", connection, if_exists="replace")
 
     connection.close()
+    logger.info("ECOMMERCE DB CREATED")
 else:
-    print("ECOMMERCE DB ALREADY EXISTS")
+    logger.info("ECOMMERCE DB ALREADY EXISTS")
 
 
 # PDF DATA
@@ -37,10 +43,11 @@ def is_index_valid():
     with open(config.POLICY_METADATA_PATH, "rb") as f:
         policy_metadata = pickle.load(f)
     return (
-        policy_metadata.get("model_name") == config.EMBEDDING_MODEL_NAME
+        policy_metadata.get("embedding_model_name") == config.EMBEDDING_MODEL_NAME
     )
 
 if not is_index_valid():
+    logger.info("CREATING POLICY INDEX...")
     policy_doc = fitz.open(config.POLICY_DATA_FILE_PATH)
 
     content_chunks = []
@@ -62,7 +69,14 @@ if not is_index_valid():
     policy_index.add(content_embeddings)
 
     faiss.write_index(policy_index, config.POLICY_FAISS_INDEX_PATH)
+    policy_metadata = {
+        "embedding_model_name": config.EMBEDDING_MODEL_NAME,
+        "vector_dimensions": vec_dim,
+        "content_chunks": content_chunks
+    }
     with open(config.POLICY_METADATA_PATH, "wb") as f:
-        pickle.dump(content_chunks, f)
+        pickle.dump(policy_metadata, f)
+    
+    logger.info("CREATED POLICY INDEX")
 else:
-    print("VALID FAISS INDEX FOR POLICY ALREADY EXISTS")
+    logger.info("VALID FAISS INDEX FOR POLICY ALREADY EXISTS")

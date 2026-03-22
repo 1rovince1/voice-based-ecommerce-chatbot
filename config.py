@@ -10,6 +10,7 @@ class Config():
     POLICY_METADATA_PATH = "./generated/policy_metadata.pkl"
 
     # Application config
-    EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-large-instruct"
+    # EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-large-instruct"
+    EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
     
 config = Config()

@@ -4,6 +4,8 @@ services:
     container_name: voice-ecommerce-chatbot
     # ports:
     #   - "8000:8000"
+    stdin_open: true
+    tty: true
     env_file:
       - ./.env
     volumes:

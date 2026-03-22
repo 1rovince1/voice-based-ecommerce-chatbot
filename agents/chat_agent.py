@@ -1,11 +1,15 @@
-from agents.clients import gemini_client, ollama_client
+import logging
 from agents.prompts import RETRIEVAL_AGENT_SYSTEM_PROMPT
+
+logger = logging.getLogger(__name__)
 
 
 chat_history = []
 
 
 async def gemini_chat(user_query: str):
+    logger.debug("Gemini chat...")
+    from agents.clients import gemini_client
     # Need to integrate manual chat session management for gemini
     # global chat_history
 
@@ -17,6 +21,8 @@ async def gemini_chat(user_query: str):
 
 
 async def ollama_chat(user_query: str):
+    logger.debug("Ollama chat...")
+    from agents.clients import ollama_client
     global chat_history
 
     response, new_messages = await ollama_client.invoke_ollama(
