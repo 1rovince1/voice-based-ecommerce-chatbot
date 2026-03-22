@@ -16,7 +16,6 @@ redis_client = Redis(
     port=os.getenv("REDIS_PORT", 6379),
     decode_responses=True
 )
-# chat_sessions = {}
 
 
 async def gemini_chat(chat_id: UUID, user_query: str):
@@ -35,8 +34,7 @@ async def gemini_chat(chat_id: UUID, user_query: str):
 async def ollama_chat(chat_id: UUID, user_query: str):
     logger.debug("Ollama chat...")
     from agents.clients import ollama_client
-    # global chat_sessions
-    # chat_history = chat_sessions.get(chat_id, [])
+
     chat_history_redis = await redis_client.get(name=str(chat_id))
     chat_history = json.loads(chat_history_redis) if chat_history_redis else []
 
@@ -46,8 +44,7 @@ async def ollama_chat(chat_id: UUID, user_query: str):
         chat_history=chat_history
     )
     chat_history.extend(new_messages)
-    # chat_sessions[chat_id] = chat_history
-    # print(chat_sessions)
+
     await redis_client.set(
         name=str(chat_id),
         value=json.dumps(chat_history),
