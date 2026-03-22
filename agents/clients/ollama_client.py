@@ -45,11 +45,12 @@ async def invoke_ollama(
             ],
             think=False
         )
-        compiled_chat.append(response.message)
-        new_messages.append(response.message)
 
         if response.message.tool_calls:
-            for tool_call in response.message.tool_calls:
+            compiled_chat.append({"role": "assistant", "content": response.message.content, "tool_calls": [tool_call.model_dump() for tool_call in response.message.tool_calls]})
+            new_messages.append({"role": "assistant", "content": response.message.content, "tool_calls": [tool_call.model_dump() for tool_call in response.message.tool_calls]})
+            
+            for tool_call in response.message.tool_calls:    
                 if tool_call.function.name in available_tools:
                     logger.debug(f"Calling {tool_call.function.name} with arguments {tool_call.function.arguments}")
                     result = available_tools[tool_call.function.name](**tool_call.function.arguments)
@@ -57,6 +58,8 @@ async def invoke_ollama(
                     compiled_chat.append({"role": "tool", "tool_name": tool_call.function.name, "content": str(result)})
                     new_messages.append({"role": "tool", "tool_name": tool_call.function.name, "content": str(result)})
         else:
+            compiled_chat.append({"role": "assistant", "content": response.message.content})
+            new_messages.append({"role": "assistant", "content": response.message.content})
             break
     
     return response.message.content, new_messages

@@ -5,6 +5,7 @@ setup_logging()
 import logging
 import os
 import asyncio
+from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ logger.debug("Starting main")
 async def main():
     logger.debug("Starting chat")
     ai_chat = select_chat_provider()
+    chat_id = uuid4()
     
     while(True):
         user_query = input("User: ")
@@ -35,7 +37,10 @@ async def main():
             logger.info("Thank you!!")
             break
 
-        ai_response = await ai_chat(user_query=user_query)
+        ai_response = await ai_chat(
+            chat_id=chat_id,
+            user_query=user_query
+        )
         logger.info(f"AI: {ai_response}\n")
 
 

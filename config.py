@@ -12,5 +12,6 @@ class Config():
     # Application config
     # EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-large-instruct"
     EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
+    CHAT_SESSION_TTL = 1800 # 30 minutes
     
 config = Config()
