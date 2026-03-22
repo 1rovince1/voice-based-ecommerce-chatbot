@@ -7,7 +7,7 @@ import faiss
 from config import config
 
 print("Loading embedding model...")
-embedding_model = SentenceTransformer("intfloat/multilingual-e5-large-instruct")
+embedding_model = SentenceTransformer(config.EMBEDDING_MODEL_NAME)
 print("Loaded embedding model")
 
 # SQL tool for csv DB query

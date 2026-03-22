@@ -1,5 +1,5 @@
 from agents.clients import gemini_client, ollama_client
-from prompts import RETRIEVAL_AGENT_SYSTEM_PROMPT
+from agents.prompts import RETRIEVAL_AGENT_SYSTEM_PROMPT
 
 
 chat_history = []

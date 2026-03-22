@@ -14,8 +14,7 @@ os.makedirs(config.GENERATED_DIR, exist_ok=True)
 # CSV DATA
 if not os.path.exists(config.ECOMMERCE_DB_PATH):
     # data pre-processing
-    ECOMMERCE_DATA_FILE_PATH = "./data/ecommerce_data.csv"
-    dataframe = pd.read_csv(ECOMMERCE_DATA_FILE_PATH)
+    dataframe = pd.read_csv(config.ECOMMERCE_DATA_FILE_PATH)
 
     dataframe["InvoiceDate"] = pd.to_datetime(dataframe["InvoiceDate"])
 
@@ -29,18 +28,29 @@ else:
 
 
 # PDF DATA
-if not os.path.exists(config.POLICY_FAISS_INDEX_PATH):
-    POLICY_DATA_FILE_PATH = "./data/ecommerce_policies.pdf"
-    policy_doc = fitz.open(POLICY_DATA_FILE_PATH)
+def is_index_valid():
+    if not os.path.exists(config.POLICY_FAISS_INDEX_PATH):
+        return False
+    if not os.path.exists(config.POLICY_METADATA_PATH):
+        return False
+    
+    with open(config.POLICY_METADATA_PATH, "rb") as f:
+        policy_metadata = pickle.load(f)
+    return (
+        policy_metadata.get("model_name") == config.EMBEDDING_MODEL_NAME
+    )
+
+if not is_index_valid():
+    policy_doc = fitz.open(config.POLICY_DATA_FILE_PATH)
 
     content_chunks = []
     for page in policy_doc:
         page_text = page.get_text("blocks")
         for block in page_text:
-            if block[6] == 0: # Only text (each block has 6 elements - 6th is block type, 4th is block text)
+            if block[6] == 0:   # Only text (each block has 6 elements - 6th is block type, 4th is block text)
                 content_chunks.append(block[4])
 
-    embedding_model = SentenceTransformer("intfloat/multilingual-e5-large-instruct")
+    embedding_model = SentenceTransformer(config.EMBEDDING_MODEL_NAME)
     content_embeddings = embedding_model.encode(
         sentences=content_chunks,
         batch_size=32,
@@ -55,4 +65,4 @@ if not os.path.exists(config.POLICY_FAISS_INDEX_PATH):
     with open(config.POLICY_METADATA_PATH, "wb") as f:
         pickle.dump(content_chunks, f)
 else:
-    print("FAISS INDEX FOR POLICY ALREADY EXISTS")
+    print("VALID FAISS INDEX FOR POLICY ALREADY EXISTS")

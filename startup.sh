@@ -1,2 +1,2 @@
-python data_processing.py &&
-python main.py
+python process_data_files.py &&
+python chat_server.py
