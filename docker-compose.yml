@@ -1,12 +1,13 @@
 services:
+  
   chatbot:
     build: .
     container_name: voice-ecommerce-chatbot
     ports:
       - "8000:8000"
       - "8501:8501"
-    stdin_open: true
-    tty: true
+    # stdin_open: true
+    # tty: true
     env_file:
       - ./.env
     volumes:
@@ -14,3 +15,11 @@ services:
       # and see changes instantly without rebuilding the image!
       - .:/app
       - ./hf_cache:/root/.cache/huggingface
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:8-trixie
+    container_name: redis
+    ports:
+      - "6379:6379"

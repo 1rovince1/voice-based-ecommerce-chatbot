@@ -71,7 +71,7 @@ if prompt := st.chat_input(
 
                 r.raise_for_status()
                 data = r.json()
-                ai_response = data["ai_response"]
+                ai_response = data["chat_agent_response"]
                 st.markdown(ai_response)
                 st.session_state.messages.append(
                     {
