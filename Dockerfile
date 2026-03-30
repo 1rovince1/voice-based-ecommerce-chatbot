@@ -17,8 +17,9 @@ RUN mkdir -p generated && chmod 777 generated
 # Change to the backend directory to run the server
 WORKDIR /app
 
-# Expose the port FastAPI runs on
-# EXPOSE 8000
+# Expose the ports
+EXPOSE 8000
+EXPOSE 8501
 
 # Command to run the application using Uvicorn
 CMD ["bash", "./startup.sh"]

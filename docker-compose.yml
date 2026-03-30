@@ -2,8 +2,9 @@ services:
   chatbot:
     build: .
     container_name: voice-ecommerce-chatbot
-    # ports:
-    #   - "8000:8000"
+    ports:
+      - "8000:8000"
+      - "8501:8501"
     stdin_open: true
     tty: true
     env_file:

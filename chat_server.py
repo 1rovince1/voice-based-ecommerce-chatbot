@@ -18,8 +18,9 @@ def select_chat_provider():
     
     elif os.getenv("OLLAMA_API_KEY"):
         logger.info("Found Ollama api key, starting Ollama based chat session...")
-        from agents.chat_agent import ollama_chat
-        return ollama_chat
+        # from agents.chat_agent import ollama_chat
+        from agents.chat_agent.agent import ollama_chat_agent
+        return ollama_chat_agent
     
     raise RuntimeError("No LLM provider configured")
 
