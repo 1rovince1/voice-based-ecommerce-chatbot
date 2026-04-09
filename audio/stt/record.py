@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 def record_with_vad(
-        sample_rate = 4410, # How many sound snapshots per second
+        sample_rate = 16000, # How many sound snapshots per second
         chunk_size_ms = 50, # How big is each audio piece we check (in ms)
-        silence_threshold_rms = 0.01,   # how quiet is silence
+        silence_threshold_rms = 0.02,   # how quiet is silence
         min_silence_duration = 1000 # how long silence means "user stopped talking"
 ):
     
@@ -23,8 +23,10 @@ def record_with_vad(
     min_silence_chunks = int(min_silence_duration / chunk_size_ms)
 
     logger.info("Listening...")
-    with sd.InputStream(samplerate=sample_rate, blocksize=chunk_size_frames) as stream:
+    with sd.InputStream(samplerate=sample_rate, blocksize=chunk_size_frames, channels=1) as stream:
         while(True):
+            logger.info("inside while loop...")
+            logger.info(is_recording)
             # read a small chunk of audio from the mic
             # this variable is an array of numbers representing the sound
             audio_chunk_np = stream.read(frames=chunk_size_frames)[0]
@@ -32,6 +34,7 @@ def record_with_vad(
             # calculate the energy of this audio chunk
             # big RMS = loud sound (maybe speech), small RMS = quiet (maybe silence)
             rms = np.sqrt(np.mean(audio_chunk_np**2))   # this is our VAD's ear
+            logger.info(f"RMS: {rms:.6f}")
 
             if is_recording:
                 # if we are already recording
@@ -51,4 +54,4 @@ def record_with_vad(
                 recorded_frames = [audio_chunk_np]  # begin with this frame
                 silence_counter = 0
 
-        return recorded_frames
+    return recorded_frames
