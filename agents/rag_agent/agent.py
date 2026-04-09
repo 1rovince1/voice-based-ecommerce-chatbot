@@ -4,7 +4,7 @@ import json
 from redis.asyncio import Redis
 
 from agents.ollama_client import invoke_ollama
-from agents.chat_agent.prompts import CHAT_AGENT_SYSTEM_PROMPT
+from agents.rag_agent.prompts import CHAT_AGENT_SYSTEM_PROMPT
 from agent_tools.adapter import build_ollama_tools
 from agent_tools.registry.retrieval import TOOLS as RETRIEVAL_TOOLS
 from config import settings, env_vars
@@ -26,9 +26,9 @@ tool_registry = RETRIEVAL_TOOLS
 ollama_tools = build_ollama_tools(tool_registry)
 
 
-async def ollama_chat_agent(
+async def ollama_rag_agent(
         user_query: str,
-        application_context: dict | None = None
+        application_context: dict
 ) -> str:
     logger.debug("Ollama chat...")
 

@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, status, Header
 
 from api.schemas.chat import ChatRequest
-from agents.chat_agent.agent import ollama_chat_agent
+from agents.rag_agent.agent import ollama_rag_agent
 
 
 logger = logging.getLogger(__name__)

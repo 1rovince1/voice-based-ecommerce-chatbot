@@ -25,8 +25,8 @@ def record_with_vad(
     logger.info("Listening...")
     with sd.InputStream(samplerate=sample_rate, blocksize=chunk_size_frames, channels=1) as stream:
         while(True):
-            logger.info("inside while loop...")
-            logger.info(is_recording)
+            logger.debug("inside while loop...")
+            logger.debug(is_recording)
             # read a small chunk of audio from the mic
             # this variable is an array of numbers representing the sound
             audio_chunk_np = stream.read(frames=chunk_size_frames)[0]
@@ -34,7 +34,7 @@ def record_with_vad(
             # calculate the energy of this audio chunk
             # big RMS = loud sound (maybe speech), small RMS = quiet (maybe silence)
             rms = np.sqrt(np.mean(audio_chunk_np**2))   # this is our VAD's ear
-            logger.info(f"RMS: {rms:.6f}")
+            logger.debug(f"RMS: {rms:.6f}")
 
             if is_recording:
                 # if we are already recording
