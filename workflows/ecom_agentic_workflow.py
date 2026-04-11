@@ -4,6 +4,7 @@ import logging
 
 from agents.rag_agent.agent import ollama_rag_agent
 from agents.stt_agent.agent import stt_agent
+from agents.tts_agent.agent import tts_agent
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,7 @@ async def execute_workflow():
             application_context=application_context
         )
         logger.info(f"Response: {agent_response}")
+        await tts_agent(text=agent_response)
 
 import asyncio
 asyncio.run(execute_workflow())
