@@ -1,8 +1,11 @@
 from uuid import uuid4
+
 import streamlit as st
 import requests
 
-API_URL = "http://localhost:8000/agent/v1/chat"
+from config import env_vars
+
+API_URL = f"{env_vars.FASTAPI_BACKEND_URL}/agent/v1/chat"
 
 
 st.set_page_config(

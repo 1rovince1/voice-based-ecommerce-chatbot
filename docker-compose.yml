@@ -1,25 +1,43 @@
 services:
-  
-  chatbot:
-    build: .
-    container_name: voice-ecommerce-chatbot
-    ports:
-      - "8000:8000"
-      - "8501:8501"
-    # stdin_open: true
-    # tty: true
-    env_file:
-      - ./.env
-    volumes:
-      # Mount your local code into the container so you can edit files 
-      # and see changes instantly without rebuilding the image!
-      - .:/app
-      - ./hf_cache:/root/.cache/huggingface
-    depends_on:
-      - redis
 
   redis:
     image: redis:8-trixie
     container_name: redis
     ports:
       - "6379:6379"
+  
+  ecom_chatbot_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    container_name: voice-ecommerce-chatbot-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    environment:
+      - REDIS_HOST=redis
+      - FASTAPI_BACKEND_URL=http://ecom_chatbot_backend:8000
+    volumes:
+      - .:/app
+      - ./hf_cache:/root/.cache/huggingface
+    depends_on:
+      - redis
+
+  ecom_chatbot_frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: voice-ecommerce-chatbot-frontend
+    ports:
+      - "8501:8501"
+    env_file:
+      - ./.env
+    environment:
+      - REDIS_HOST=redis
+      - FASTAPI_BACKEND_URL=http://ecom_chatbot_backend:8000
+    volumes:
+      - .:/app
+      - ./hf_cache:/root/.cache/huggingface
+    depends_on:
+      - ecom_chatbot_backend
