@@ -65,7 +65,6 @@ if prompt := st.chat_input(
                     headers={
                         "CHAT-SERVICE-AUTH-KEY": "chAT-SERVice_AUth-keY",
                         "session-id": str(st.session_state.session_id),
-                        # "member-id": str(17)
                     }
                 )
 

@@ -22,7 +22,7 @@ async def chat_request(
         application_context = {
             "session_id": session_id
         }
-        chat_agent_response = await ollama_chat_agent(
+        chat_agent_response = await ollama_rag_agent(
             user_query=request.user_query,
             application_context=application_context
         )
