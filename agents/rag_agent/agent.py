@@ -3,7 +3,7 @@ import json
 
 from redis.asyncio import Redis
 
-from agents.ollama_client import invoke_ollama
+from services.llm.ollama_client import invoke_ollama
 from agents.rag_agent.prompts import CHAT_AGENT_SYSTEM_PROMPT
 from agent_tools.adapter import build_ollama_tools
 from agent_tools.registry.retrieval import TOOLS as RETRIEVAL_TOOLS

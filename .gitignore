@@ -212,3 +212,4 @@ __marimo__/
 *.faiss
 *.pkl
 hf_cache/
+logs/
