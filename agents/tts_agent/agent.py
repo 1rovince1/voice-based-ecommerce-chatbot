@@ -20,7 +20,7 @@ async def tts_agent(text: str):
     # sd.wait()
 
     await asyncio.to_thread(
-        kokoro_model,
+        kokoro_tts,
         text
         # "Realistic male voice in the 30s age with american accent. Normal pitch, warm timbre, conversational pacing."
     )
