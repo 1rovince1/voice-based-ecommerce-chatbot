@@ -1,7 +1,7 @@
 import logging
 import asyncio
 
-from agents.stt_agent.utils.record import vad_analyzer
+from agents.stt_agent.utils.vad import vad_analyzer
 from agents.stt_agent.utils.convert import speech_to_text
 from services.io.microphone import input_mic_stream
 
