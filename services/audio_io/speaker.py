@@ -1,0 +1,16 @@
+import sounddevice as sd
+
+
+def play_audio_stream(
+        audio_stream,
+        sample_rate = 24000,
+        num_channels = 1,
+        data_type = "float32"
+):
+    with sd.OutputStream(
+        samplerate=sample_rate,
+        channels=num_channels,
+        dtype=data_type
+    ) as output_stream:
+        for audio_chunk_np in audio_stream:
+            output_stream.write(audio_chunk_np)

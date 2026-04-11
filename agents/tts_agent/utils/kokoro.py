@@ -1,7 +1,6 @@
 import logging
 
 from kokoro import KPipeline
-import sounddevice as sd
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -16,10 +15,11 @@ def kokoro_tts_stream(
 ):
     generator = pipeline(text_to_convert, voice=kokoro_voice)
 
-    with sd.OutputStream(samplerate=24000, channels=1) as output_stream:
-        for i, (gs, ps, audio) in enumerate(generator):
-            # logger.debug(i, gs, ps)
-            output_stream.write(audio)
+    for i, (gs, ps, audio_tensor) in enumerate(generator):
+        # logger.debug(i, gs, ps)
+        audio_np = audio_tensor.cpu().detach().numpy().astype(np.float32)
+        
+        yield audio_np
 
 
 def kokoro_tts_batch(
@@ -29,10 +29,9 @@ def kokoro_tts_batch(
     generator = pipeline(text_to_convert, voice=kokoro_voice)
 
     all_audio = []
-    for i, (gs, ps, audio) in enumerate(generator):
+    for i, (gs, ps, audio_tensor) in enumerate(generator):
         # logger.debug(i, gs, ps)
-        all_audio.append(audio)
+        audio_np = audio_tensor.cpu().detach().numpy().astype(np.float32)
+        all_audio.append(audio_np)
     
-    sd.play(np.concatenate(all_audio), 24000)
-    sd.wait()
-    # return np.concatenate(all_audio), 24000
+    return np.concatenate(all_audio)

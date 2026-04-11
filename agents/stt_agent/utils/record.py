@@ -9,6 +9,8 @@ logger = logging.getLogger(__name__)
 
 def record_with_vad(
         sample_rate = 16000, # How many sound snapshots per second
+        num_channels = 1,
+        data_type = "float32",
         chunk_size_ms = 50, # How big is each audio piece we check (in ms)
         silence_threshold_rms = 0.02,   # how quiet is silence
         min_silence_duration = 1000 # how long silence means "user stopped talking"
@@ -23,7 +25,12 @@ def record_with_vad(
     min_silence_chunks = int(min_silence_duration / chunk_size_ms)
 
     logger.info("Listening...")
-    with sd.InputStream(samplerate=sample_rate, blocksize=chunk_size_frames, channels=1) as stream:
+    with sd.InputStream(
+        samplerate=sample_rate,
+        blocksize=chunk_size_frames,
+        channels=num_channels,
+        dtype=data_type
+    ) as stream:
         while(True):
             logger.debug("inside while loop...")
             logger.debug(is_recording)

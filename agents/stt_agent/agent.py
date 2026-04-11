@@ -11,9 +11,16 @@ logger = logging.getLogger(__name__)
 
 async def stt_agent():
     logger.info("STT agent...")
-    recorded_frames = await asyncio.to_thread(record_with_vad)
-    if not recorded_frames:
-        return None
-    converted_text = await asyncio.to_thread(speech_to_text, np.concatenate(recorded_frames, axis=0).squeeze())
+    
+    recorded_frames = await asyncio.to_thread(
+        record_with_vad,
+        sample_rate=16000,
+        num_channels=1,
+        data_type="float32"
+    )
+    converted_text = await asyncio.to_thread(
+        speech_to_text,
+        audio_np_array=np.concatenate(recorded_frames, axis=0).squeeze()
+    )
 
     return converted_text
