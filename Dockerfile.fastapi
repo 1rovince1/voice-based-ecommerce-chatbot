@@ -1,0 +1,29 @@
+# Use official Python runtime as a parent image
+FROM python:3.12-slim
+
+# Update package lists and install espeak-ng, then clean up to save space
+RUN apt-get update && \
+    apt-get install -y espeak-ng && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set the working directory for the app
+WORKDIR /app
+
+# Copy the requirements file and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
+COPY . .
+
+# Create the generated directory and give it wide-open permissions
+RUN mkdir -p generated && chmod 777 generated
+
+# Change to the backend directory to run the server
+WORKDIR /app
+
+# Expose the ports
+EXPOSE 8000
+
+# Command to run the application using Uvicorn
+CMD ["bash", "./startup.sh"]

@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 redis_client = Redis(
     host=env_vars.REDIS_HOST,
     port=env_vars.REDIS_PORT,
+    db=env_vars.REDIS_DB,
     decode_responses=True
 )
 
