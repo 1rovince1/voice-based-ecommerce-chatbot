@@ -1,4 +1,4 @@
-from utils.logger_config import setup_logging
+from config.logger_config import setup_logging
 setup_logging()
 from contextlib import asynccontextmanager
 
@@ -6,7 +6,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes.chat import router as ChatRouter
-from utils.auth import verify_auth_api_key
+from api.utils.auth import verify_auth_api_key
 
 
 @asynccontextmanager
