@@ -5,7 +5,8 @@ import requests
 
 from config import env_vars
 
-API_URL = f"{env_vars.FASTAPI_BACKEND_URL}/agent/v1/chat"
+CHAT_API_URL = f"{env_vars.FASTAPI_BACKEND_URL}/agent/v1/chat"
+VOICE_CHAT_API_URL = f"{env_vars.FASTAPI_BACKEND_URL}/agent/v1/voice_chat"
 
 
 st.set_page_config(
@@ -38,12 +39,16 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# ---------- Input ----------
-if prompt := st.chat_input(
-    "E.g. Which country's item is traded the most? Also, tell me the methods that can be used for payments."
-):
 
-    # show user
+# chat_box, mic_button = st.columns([8, 1])
+
+prompt = st.chat_input("E.g. Which country's item is traded the most? Also, tell me the methods that can be used for payments.")
+with st.sidebar:
+    mic_button = st.button("🎤")
+
+
+# -------- TEXT INPUT --------
+if prompt:
     with st.chat_message("user"):
         st.markdown(prompt)
 
@@ -51,18 +56,13 @@ if prompt := st.chat_input(
         {"role": "user", "content": prompt}
     )
 
-    # call API
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-
             try:
-
-                payload = {
-                    "user_query": prompt
-                }
+                payload = {"user_query": prompt}
 
                 r = requests.post(
-                    API_URL,
+                    CHAT_API_URL,
                     json=payload,
                     timeout=120,
                     headers={
@@ -74,20 +74,40 @@ if prompt := st.chat_input(
                 r.raise_for_status()
                 data = r.json()
                 ai_response = data["chat_agent_response"]
+
                 st.markdown(ai_response)
+
                 st.session_state.messages.append(
-                    {
-                        "role": "assistant",
-                        "content": ai_response
-                    }
+                    {"role": "assistant", "content": ai_response}
                 )
 
             except Exception as e:
-                error_msg = f"Error calling API: {e}"
-                st.error(error_msg)
-                st.session_state.messages.append(
-                    {
-                        "role": "assistant",
-                        "content": error_msg
+                st.error(f"Error: {e}")
+
+
+# -------- MIC INPUT --------
+if mic_button:
+    with st.chat_message("assistant"):
+        with st.spinner("Listening..."):
+            try:
+                r = requests.get(
+                    VOICE_CHAT_API_URL,
+                    timeout=120,
+                    headers={
+                        "CHAT-SERVICE-AUTH-KEY": "chAT-SERVice_AUth-keY",
+                        "session-id": str(st.session_state.session_id),
                     }
                 )
+
+                r.raise_for_status()
+                data = r.json()
+                ai_response = data["message"]
+
+                st.markdown(ai_response)
+
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": ai_response}
+                )
+
+            except Exception as e:
+                st.error(f"Error: {e}")

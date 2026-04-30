@@ -1,24 +1,15 @@
 import logging
 import json
 
-from redis.asyncio import Redis
-
-from services.llm.ollama_client import invoke_ollama
+from services.llm.ollama_llm import invoke_ollama_llm
 from agents.rag_agent.prompts import CHAT_AGENT_SYSTEM_PROMPT
 from agent_tools.adapter import build_ollama_tools
 from agent_tools.registry.retrieval import TOOLS as RETRIEVAL_TOOLS
-from config import settings, env_vars
+from clients.redis_client import redis_manager
+from config import settings
 
 
 logger = logging.getLogger(__name__)
-
-
-redis_client = Redis(
-    host=env_vars.REDIS_HOST,
-    port=env_vars.REDIS_PORT,
-    db=env_vars.REDIS_DB,
-    decode_responses=True
-)
 
 
 MAX_CHAT_SESSION_MESSAGES = settings.MAX_CHAT_SESSION_MESSAGES
@@ -31,12 +22,13 @@ async def ollama_rag_agent(
         user_query: str,
         application_context: dict
 ) -> str:
+    
     logger.debug("Ollama chat...")
 
-    chat_history_redis = await redis_client.get(name=str(application_context["session_id"]))
+    chat_history_redis = await redis_manager.client.get(name=str(application_context["session_id"]))
     chat_history = json.loads(chat_history_redis) if chat_history_redis else []
 
-    response, new_messages = await invoke_ollama(
+    response, new_messages = await invoke_ollama_llm(
         user_query=user_query,
         system_prompt=CHAT_AGENT_SYSTEM_PROMPT,
         chat_history=chat_history,
@@ -52,9 +44,9 @@ async def ollama_rag_agent(
         chat_to_save.pop(0)
     # remove last message if it is unresponded tool call by LLM
     while chat_to_save and chat_to_save[-1]["role"] == "assistant" and chat_to_save[-1].get("tool_calls"):
-            chat_to_save.pop()
+        chat_to_save.pop()
 
-    await redis_client.set(
+    await redis_manager.client.set(
         name=str(application_context["session_id"]),
         value=json.dumps(chat_to_save),
         ex=settings.CHAT_SESSION_TTL

@@ -25,5 +25,5 @@ async def execute_workflow():
         logger.info(f"Response: {agent_response}")
         await tts_agent(text=agent_response)
 
-import asyncio
-asyncio.run(execute_workflow())
+# import asyncio
+# asyncio.run(execute_workflow())

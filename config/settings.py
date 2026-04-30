@@ -11,7 +11,11 @@ POLICY_METADATA_PATH: str = "./generated/policy_metadata.pkl"
 # Application config
 # EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-large-instruct"
 EMBEDDING_MODEL_NAME: str = "all-MiniLM-L6-v2"
-OLLAMA_LLM_MODEL: str = "kimi-k2.5"
+# OLLAMA_LLM_MODEL: str = "kimi-k2.5"
+OLLAMA_LLM_MODEL: str = "gpt-oss:120b"
 CHAT_SESSION_TTL: int = 1800 # 30 minutes
 MAX_CHAT_SESSION_MESSAGES: int = 500
 MAX_TOOL_LOOP_ITERATIONS: int = 20
+
+# redis config
+REDIS_MAX_CONNECTIONS: int = 10

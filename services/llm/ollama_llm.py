@@ -1,22 +1,14 @@
 import logging
 import json
 
-from ollama import AsyncClient
-
 from agent_tools.dispatcher import dispatch_tool
-from config import settings, env_vars
-
+from clients.ollama_client import ollama_manager
+from config import settings
 
 logger = logging.getLogger(__name__)
 
 
-ollama_async_client = AsyncClient(
-    host="https://ollama.com",
-    headers={"Authorization": "Bearer " + env_vars.OLLAMA_API_KEY}
-)
-
-
-async def invoke_ollama(
+async def invoke_ollama_llm(
         user_query: str,
         system_prompt: str | None,
         chat_history: list | None = None,
@@ -42,7 +34,7 @@ async def invoke_ollama(
 
     # Tool loop
     while(True):
-        response = await ollama_async_client.chat(
+        response = await ollama_manager.client.chat(
             model=settings.OLLAMA_LLM_MODEL,
             messages=compiled_chat + new_messages,
             tools=available_tools,

@@ -1,5 +1,8 @@
+from dotenv import load_dotenv
+load_dotenv()
 from config.logger_config import setup_logging
 setup_logging()
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Depends
@@ -7,11 +10,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes.chat import router as ChatRouter
 from api.utils.auth import verify_auth_api_key
+from clients.ollama_client import ollama_manager
+from clients.redis_client import redis_manager
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await ollama_manager.connect()
+    await redis_manager.connect()
     yield
+    await ollama_manager.disconnect()
+    await redis_manager.disconnect()
 
 
 app = FastAPI(

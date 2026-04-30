@@ -1,8 +1,5 @@
 import os
 
-from dotenv import load_dotenv
-load_dotenv()
-
 
 OLLAMA_API_KEY: str = os.getenv("OLLAMA_API_KEY")
 
